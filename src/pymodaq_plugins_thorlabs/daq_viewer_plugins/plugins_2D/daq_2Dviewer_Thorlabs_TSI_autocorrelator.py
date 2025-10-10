@@ -43,13 +43,13 @@ class DAQ_2DViewer_Thorlabs_TSI_autocorrelator(DAQ_2DViewer_Thorlabs_TSI):
              {'title': 'Sech²', 'name': 'Sec2', 'type': 'bool', 'value': False},
              {'title': 'Vertical average', 'name': 'av_axis_v', 'type': 'bool', 'value': True},
              {'title': 'Horizontal average', 'name': 'av_axis_h', 'type': 'bool', 'value': False},
-             {'title': 'Pixel to femtosecond conversion', 'name': 'PxFs', 'type': 'float', 'value': 0.764, 'readonly': False}]
+             {'title': 'Pixel to femtosecond conversion', 'name': 'PxFs', 'type': 'float', 'value': 0.914, 'readonly': False}]#0.764 with 1/dx2 gaussia definition
          }
     ]
 
     callback_signal = QtCore.Signal()
     def gaus(self, x, a, x0, dx):
-        return a * np.exp(-(x - x0) ** 2 / (dx ** 2))
+        return a * np.exp(-(x - x0) ** 2 / (2*dx ** 2))
     #def grab_data(self, Naverage=1, **kwargs):
 
     def ini_attributes(self):
@@ -252,15 +252,15 @@ class DAQ_2DViewer_Thorlabs_TSI_autocorrelator(DAQ_2DViewer_Thorlabs_TSI):
 
 
                 if self.settings.child('ac_param', 'GS').value() == True:
-                    self.factor = 1/1.41
+                    self.factor = 1/np.sqrt(2)
                 else:
                     self.factor = 0.65
 
                 PxFs = self.settings.child('ac_param', 'PxFs').value()
                 dwa0D = DataFromPlugins(name='Pulse duration',
-                                                          data=[np.array([popt[2]*PxFs*self.factor])],
+                                                          data=[np.abs(2.355*np.array([popt[2]*PxFs*self.factor]))], #fwhm conversion
                                                           dim='Data0D',
-                                                          labels=['Pulse duration (fs)'],
+                                                          labels=['FWHM (fs)'],
                                                             unit='fs')
 
             dataa = DataToExport('Autocorrelator', data=[dwa2D, dwa1D, dwa0D])
