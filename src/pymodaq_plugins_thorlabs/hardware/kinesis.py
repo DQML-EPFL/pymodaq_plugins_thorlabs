@@ -134,3 +134,6 @@ class Flipper(Kinesis):
         else:
             position = 1
         return position
+
+
+

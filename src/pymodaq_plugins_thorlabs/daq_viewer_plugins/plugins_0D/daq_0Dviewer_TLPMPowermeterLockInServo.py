@@ -24,21 +24,19 @@ from future.utils import raise_
 from pymodaq.utils.daq_utils import ThreadCommand, getLineInfo
 from pymodaq.utils.data import DataFromPlugins
 from pymodaq.control_modules.viewer_utility_classes import DAQ_Viewer_base, main
-import time
-import numpy as np
 from pymodaq.control_modules.viewer_utility_classes import comon_parameters
 from pymodaq_plugins_thorlabs.hardware.powermeter import CustomTLPM, DEVICE_NAMES
 from typing import Union, List, Dict
-from pymodaq.control_modules.move_utility_classes import (DAQ_Move_base, comon_parameters_fun,
-                                                          main, DataActuatorType, DataActuator)
 
 from pymodaq_utils.utils import ThreadCommand  # object used to send info back to the main thread
 from pymodaq_gui.parameter import Parameter
+from pymodaq.utils.data import Axis
 
+import time
+import numpy as np
 from yoctopuce.yocto_api import YAPI, YRefParam
 from yoctopuce.yocto_servo import YServo
 
-from pymodaq.utils.data import Axis
 
 
 class YoctoServoWrapper:
@@ -47,6 +45,11 @@ class YoctoServoWrapper:
         if YAPI.RegisterHub("usb", errmsg) != YAPI.SUCCESS:
             raise RuntimeError("Cannot initialize YoctoPuce : " + errmsg.value)
         self.servo = YServo.FirstServo()
+        self.servo = self.servo.nextServo()
+        self.servo = self.servo.nextServo()
+        self.servo = self.servo.nextServo()
+        self.servo = self.servo.nextServo()
+        print("Using servo : " , self.servo)
         if self.servo is None:
             raise RuntimeError("YoctoPuce not found.")
         self.servo.set_enabled(True)
@@ -64,7 +67,6 @@ class YoctoServoWrapper:
         self.servo.set_enabled(False)
 
 
-
 class DAQ_0DViewer_TLPMPowermeterLockInServo(DAQ_Viewer_base):
 
     _controller_units = 'W'
@@ -75,8 +77,8 @@ class DAQ_0DViewer_TLPMPowermeterLockInServo(DAQ_Viewer_base):
         {'title': 'Devices:', 'name': 'devices', 'type': 'list', 'limits': devices},
         {'title': 'Info:', 'name': 'info', 'type': 'str', 'value': '', 'readonly': True},
         {'title': 'Wavelength:', 'name': 'wavelength', 'type': 'float', 'value': 532.,},
-        {'title': 'Nb of cycle:', 'name': 'nb_of_cycle', 'type': 'int', 'value':1, 'limits': (1, 300)},
-        {'title': 'Servo time:', 'name': 'servo_time', 'type': 'float', 'value': 1.0, 'limits': (1.1, 30)},
+        {'title': 'Nb of cycle:', 'name': 'nb_of_cycle', 'type': 'int', 'value':5, 'limits': (1, 300)},
+        {'title': 'Servo time:', 'name': 'servo_time', 'type': 'float', 'value': 8.0, 'limits': (1.1, 30)},
         ]
 
     def __init__(self, parent=None, params_state=None):

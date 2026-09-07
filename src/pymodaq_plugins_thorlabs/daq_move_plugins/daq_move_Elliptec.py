@@ -28,13 +28,13 @@ class DAQ_Move_Elliptec(DAQ_Move_base):
          hardware library
 
     """
-    _controller_units = 'whatever'
+    _controller_units = '°'
     is_multiaxes = True
     axes_names = ['0']
     _epsilon = 0.1
 
     params = [ {'title': 'COM port', 'name': 'com_port', 'type': 'list', 'limits': com_ports},
-               {'title': 'Serial No.', 'name': 'serial', 'type': 'str'},
+               {'title': 'Serial No.', 'name': 'serial', 'type': 'str', 'value':'2024-11400886'},
                {'title': 'Motor Type', 'name': 'motor', 'type': 'str'},
                {'title': 'Range', 'name': 'range', 'type': 'str'},
                ] + comon_parameters_fun(is_multiaxes, axes_names, epsilon=_epsilon)
@@ -86,6 +86,7 @@ class DAQ_Move_Elliptec(DAQ_Move_base):
             False if initialization failed otherwise True
         """
         serial = Controller(self.settings['com_port'])
+        print(serial)
         self.controller = self.ini_stage_init(old_controller=controller,
                                               new_controller=Rotator(serial))
         all_info = self.controller.get('info')

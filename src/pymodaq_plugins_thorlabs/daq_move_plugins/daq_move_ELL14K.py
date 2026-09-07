@@ -5,7 +5,7 @@ import numpy as np
 
 class DAQ_Move_ELL14K(DAQ_Move_base):
     is_multiaxes = False
-    _controller_units = 'deg'
+    _controller_units = '°'
     _epsilon = 0.2
     data_actuator_type = DataActuatorType.DataActuator
     params = comon_parameters_fun(is_multiaxes, epsilon=_epsilon)
@@ -16,7 +16,7 @@ class DAQ_Move_ELL14K(DAQ_Move_base):
     def ini_stage(self, controller=None):
         self.ini_stage_init(slave_controller=controller)
         if self.is_master:
-            self.controller = ELLx("COM5")
+            self.controller = ELLx("COM6")
             self.controller.home(blocking=True)
         return "ELL14K initialized", True
 
